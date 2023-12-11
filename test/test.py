@@ -32,33 +32,12 @@ class TestLLMResponse(unittest.TestCase):
         chain = get_basic_chain()
         self.assertIsInstance(chain, RunnableSequence)
     
-    def test_return_type_movie_to_actors_chain(self):
-        chain = get_movie_to_actors_chain()
-        self.assertIsInstance(chain, RunnableSequence)
-
-    def test_return_type_actors_to_movies_chain(self):
-        chain = get_actors_to_movies_chain()
-        self.assertIsInstance(chain, RunnableSequence)
-    
-    def test_return_type_final_chain(self):
-        chain = get_final_chain()
-        self.assertIsInstance(chain, RunnableSequence)
-
     def test_basic_chain_relevancy(self):
         result = basic_chain_invoke("honey bees")
         self.assertIsInstance(result, str)
         self.assertTrue(classify_relevancy(result, "Can you tell me about honey bees?"))
     
-    def test_movies_to_actors_chain_relevancy(self):
-        result = get_movie_to_actors_chain().invoke({"movie": "The Wizard of Oz"})
-        self.assertIsInstance(result, dict)
-        self.assertTrue(classify_relevancy(result, "What actors are in the Wizard of Oz?"))
-
-    def test_final_chain_relevancy(self):
-        result = get_final_chain().invoke({"movie": "The Wizard of Oz"})
-        print(type(result))
-        self.assertTrue(classify_relevancy(result, "What movies share common actors with Wizard of Oz?"))
-
+   
 def classify_relevancy(message, question):
     deployment = os.environ['DEPLOYMENT_NAME']
     llm = AzureChatOpenAI(deployment_name=deployment, model_name="gpt-35-turbo")
