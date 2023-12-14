@@ -24,4 +24,4 @@ chain.invoke({"topic": "ice cream"})
 - [test/test.py](test/test.py)
 
 ## Should Modify
-- [lab/lab.py](lab/lab.py) - look out for TODO statements
+- [main/lab.py](main/lab.py) - look out for TODO statements
