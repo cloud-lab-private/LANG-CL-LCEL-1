@@ -9,7 +9,6 @@ import os
 # Set Up API access via environment variables:
 api_key = os.environ['OPENAI_API_KEY']
 base_url = os.environ['OPENAI_API_BASE']
-deployment = os.environ['DEPLOYMENT_NAME']
 version = os.environ['OPENAI_API_VERSION']
 
 # TODO: Complete this prompt to ask the model for general information on a {topic}:
@@ -17,7 +16,7 @@ prompt_template = "{topic}"
 prompt = ChatPromptTemplate.from_template(prompt_template)
 
 # Create a model:
-model = AzureChatOpenAI(openai_api_version="2023-05-15",azure_deployment=deployment)
+model = AzureChatOpenAI(openai_api_version="2023-05-15")
 
 # Use a simple output parser that converts output to a string
 output_parser = StrOutputParser()

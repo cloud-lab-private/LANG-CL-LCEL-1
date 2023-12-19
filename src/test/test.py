@@ -8,7 +8,7 @@ import unittest
 
 from langchain.schema.runnable.base import RunnableSequence
 from langchain.chat_models import AzureChatOpenAI
-from main.lab import get_basic_chain, basic_chain_invoke
+from src.main.lab import get_basic_chain, basic_chain_invoke
 
 
 class TestLLMResponse(unittest.TestCase):
