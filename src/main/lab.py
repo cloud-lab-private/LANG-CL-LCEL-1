@@ -25,7 +25,7 @@ output_parser = StrOutputParser()
 # Make sure you use LCEL to achieve this. 
 # Hint: The function body can be as short as a single line
 def get_basic_chain():
-    chain = None
+    chain = prompt | model | output_parser
     return chain
 
 # Using the chain created in basic_chain, invoke the chain with a topic.
