@@ -7,7 +7,9 @@ import os
 import unittest
 
 from langchain.schema.runnable.base import RunnableSequence
-from langchain.chat_models import AzureChatOpenAI
+from langchain.llms import HuggingFaceEndpoint
+from langchain.schema.output_parser import StrOutputParser
+from langchain_core.prompts import PromptTemplate
 from src.main.lab import get_basic_chain, basic_chain_invoke
 
 
@@ -19,8 +21,14 @@ class TestLLMResponse(unittest.TestCase):
     """
 
     def test_llm_sanity_check(self):
-        deployment = os.environ['DEPLOYMENT_NAME']
-        llm = AzureChatOpenAI(deployment_name=deployment, model_name="gpt-35-turbo")
+        llm = HuggingFaceEndpoint(
+        endpoint_url=os.environ['HF_ENDPOINT'],
+        huggingfacehub_api_token=os.environ['HF_TOKEN'],
+        task="text-generation",
+        model_kwargs={
+            "max_new_tokens": 1024
+        }
+    )
 
     """
     The variable returned from the lab function should be an langchain AI response. If this test
@@ -39,13 +47,32 @@ class TestLLMResponse(unittest.TestCase):
     
    
 def classify_relevancy(message, question):
-    deployment = os.environ['DEPLOYMENT_NAME']
-    llm = AzureChatOpenAI(deployment_name=deployment, model_name="gpt-35-turbo")
-    result = llm.invoke(f"Answer the following quest with a 'Yes' or 'No' response. Does the"
-                        f"message below successfully answer the following question?"
-                        f"message: {message}"
-                        f"question: {question}")
-    if ("yes" in result.content.lower()):
+    prompt_template = PromptTemplate.from_template(
+        """
+        <|system|>
+        You are a chatbot who determines if a given message properly answers a question by replying "yes" or "no".</s>
+        <|user|>
+        Does the following message answer the question: {question}? message: {message}</s>
+        <|assistant|>
+        """
+    )
+
+    model = HuggingFaceEndpoint(
+        endpoint_url=os.environ['HF_ENDPOINT'],
+        huggingfacehub_api_token=os.environ['HF_TOKEN'],
+        task="text-generation",
+        model_kwargs={
+            "max_new_tokens": 1024
+        }
+    )
+
+    chain = prompt_template | model | StrOutputParser()
+
+    result = chain.invoke({"message": message, "question": question})
+    print("Result: " + result)
+    print(message)
+    print(question)
+    if ("yes" in result.lower()):
         return True
     else:
         print(message)
