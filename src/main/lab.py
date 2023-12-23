@@ -3,20 +3,23 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.schema.output_parser import StrOutputParser
 from langchain.output_parsers import CommaSeparatedListOutputParser
 from langchain.schema.runnable import RunnablePassthrough
+from langchain.llms import HuggingFaceEndpoint
 
 import os
 
-# Set Up API access via environment variables:
-api_key = os.environ['OPENAI_API_KEY']
-base_url = os.environ['OPENAI_API_BASE']
-version = os.environ['OPENAI_API_VERSION']
-
 # TODO: Complete this prompt to ask the model for general information on a {topic}:
-prompt_template = "{topic}"
+prompt_template = "Tell me some general information on: {topic} in under 100 words."
 prompt = ChatPromptTemplate.from_template(prompt_template)
 
-# Create a model:
-model = AzureChatOpenAI(openai_api_version="2023-05-15")
+model = HuggingFaceEndpoint(
+    endpoint_url=os.environ['HF_ENDPOINT'],
+    huggingfacehub_api_token=os.environ['HF_TOKEN'],
+    task="text-generation",
+    model_kwargs={
+        "max_new_tokens": 1024
+    }
+)
+
 
 # Use a simple output parser that converts output to a string
 output_parser = StrOutputParser()
